@@ -10,3 +10,20 @@
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
 Nesthack::Application.config.secret_key_base = '5cd6dca84fa5c99931878dad4dacc4b5be12ce98baeb65152daf2acca735cad1aea0062795fcd7959167cdc8de35ba7e05966f5e25fa06299d9305a5510fa380'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SampleApp::Application.config.secret_key_base = secure_token
